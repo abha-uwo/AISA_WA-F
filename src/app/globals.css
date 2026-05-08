@@ -1,37 +1,67 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
-  --background: #f9fafb;
-  --foreground: #111827;
-  --primary: #3b82f6;
+  --background: #fdfdfe;
+  --foreground: #1e293b;
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
   --card: #ffffff;
-  --card-foreground: #1f2937;
-  --border: #e5e7eb;
+  --card-foreground: #1e293b;
+  --border: #f1f5f9;
+}
+
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
 }
 
 @layer base {
   body {
-    @apply bg-[var(--background)] text-[var(--foreground)] antialiased;
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply antialiased selection:bg-blue-100 selection:text-blue-900;
   }
 }
 
 @layer components {
-  .dashboard-card {
-    @apply bg-white border border-gray-200 rounded-xl shadow-sm p-6;
-  }
-  
-  .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors;
+  /* Modern Glass Card */
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[32px];
   }
 
-  .sidebar-link {
-    @apply flex items-center gap-3 px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-all;
+  /* Premium Shadow */
+  .premium-shadow {
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05),
+                0 5px 15px -5px rgba(0, 0, 0, 0.02);
   }
 
-  .sidebar-link-active {
-    @apply bg-blue-50 text-blue-600 font-medium;
+  /* Hover Lift Effect */
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200/50;
   }
+
+  /* Custom Input */
+  .input-field {
+    @apply w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 transition-all font-medium text-slate-900 placeholder:text-slate-400;
+  }
+
+  /* Modern Button */
+  .btn-premium {
+    @apply px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold uppercase tracking-widest text-[11px] shadow-lg shadow-slate-200 active:scale-95 transition-all hover:bg-blue-600;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
 }
