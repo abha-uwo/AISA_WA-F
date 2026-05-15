@@ -13,7 +13,8 @@ import {
   LogOut,
   ChevronRight,
   Zap as ZapIcon,
-  ShieldCheck
+  ShieldCheck,
+  Scale
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -27,6 +28,7 @@ const Sidebar = ({ role }) => {
     { name: 'Approvals', href: '/admin/approvals', icon: ShieldCheck },
     { name: 'Automations', href: '/admin/automations', icon: Zap },
     { name: 'Messages', href: '/admin/inbox', icon: MessageSquare },
+    { name: 'Policy', href: '/admin/settings/legal', icon: Scale },
     { name: 'Analytics', href: '/admin/stats', icon: GitBranch },
   ];
 
@@ -90,11 +92,16 @@ const Sidebar = ({ role }) => {
       <div className="p-6">
         <button 
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all group font-bold"
+          className="w-full flex items-center gap-3 px-4 py-3.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all group font-bold mb-4"
         >
           <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" />
           <span className="text-xs uppercase tracking-widest">Logout</span>
         </button>
+
+        <div className="px-4 py-4 border-t border-slate-50 flex flex-col gap-2">
+          <Link href="/privacy" className="text-[9px] font-bold text-slate-300 uppercase tracking-widest hover:text-blue-500 transition-colors italic">Privacy Policy</Link>
+          <Link href="/terms" className="text-[9px] font-bold text-slate-300 uppercase tracking-widest hover:text-blue-500 transition-colors italic">Terms of Service</Link>
+        </div>
       </div>
 
       <style jsx>{`

@@ -1,12 +1,51 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Shield, Mail, Lock, Loader2, ChevronRight, User, ShieldCheck, Zap } from 'lucide-react';
+import { Shield, Mail, Lock, Loader2, ChevronRight, User, ShieldCheck, Zap, FileText, X } from 'lucide-react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const LegalModal = ({ isOpen, onClose, title, content, fileUrl }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+      <motion.div 
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        onClick={onClose} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" 
+      />
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="relative bg-white w-full max-w-4xl max-h-[90vh] rounded-[32px] shadow-2xl overflow-hidden flex flex-col"
+      >
+        <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
+          <div>
+            <h2 className="text-xl font-black text-slate-900 uppercase italic tracking-tight">{title}</h2>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Official Legal Documentation</p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-slate-50 rounded-xl transition-colors text-slate-400 hover:text-slate-900">
+            <X size={24} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-8 sm:p-12 space-y-10 custom-scrollbar">
+          <div 
+            className="prose prose-slate max-w-none prose-sm sm:prose-base"
+            dangerouslySetInnerHTML={{ __html: content || '<p class="italic text-slate-400 text-center py-20">Our Legal Policy is currently being updated. Please check back shortly.</p>' }}
+          />
+        </div>
+
+        <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-end">
+          <button onClick={onClose} className="px-8 py-3 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-black transition-all">
+            Close Viewer
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
 
 const LoginPage = () => {
   const [role, setRole] = useState('CLIENT');
@@ -14,7 +53,30 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [legalData, setLegalData] = useState({ 
+    privacy: { value: '', file: null }, 
+    terms: { value: '', file: null } 
+  });
+  const [activeModal, setActiveModal] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchLegal = async () => {
+      try {
+        const [privRes, termsRes] = await Promise.all([
+          axios.get('http://127.0.0.1:8080/api/admin/settings/global?key=privacy_policy'),
+          axios.get('http://127.0.0.1:8080/api/admin/settings/global?key=terms_of_service')
+        ]);
+        setLegalData({
+          privacy: privRes.data,
+          terms: termsRes.data
+        });
+      } catch (err) {
+        console.error("Failed to fetch legal files for modals");
+      }
+    };
+    fetchLegal();
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -37,7 +99,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans text-slate-900">
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50/50 blur-[120px] -mr-32 -mt-32 rounded-full" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-100/30 blur-[100px] -ml-24 -mb-24 rounded-full" />
 
@@ -132,10 +194,52 @@ const LoginPage = () => {
           </div>
         </div>
 
-        <p className="text-center mt-10 text-slate-400 text-[11px] font-semibold uppercase tracking-widest">
-          &copy; 2026 Aisaconnect Infrastructure
-        </p>
+        <div className="mt-10 flex flex-col items-center gap-4">
+          <p className="text-slate-400 text-[11px] font-semibold uppercase tracking-widest">
+            &copy; 2026 Aisaconnect Infrastructure
+          </p>
+          <div className="flex items-center gap-6">
+            {(legalData.privacy.value || legalData.privacy.file) && (
+              <>
+                <button 
+                  onClick={() => setActiveModal('privacy')}
+                  className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] hover:text-blue-600 transition-colors"
+                >
+                  Privacy Policy
+                </button>
+                {(legalData.terms.value || legalData.terms.file) && <div className="w-1 h-1 bg-slate-300 rounded-full" />}
+              </>
+            )}
+            {(legalData.terms.value || legalData.terms.file) && (
+              <button 
+                onClick={() => setActiveModal('terms')}
+                className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] hover:text-blue-600 transition-colors"
+              >
+                Terms of Service
+              </button>
+            )}
+          </div>
+        </div>
       </motion.div>
+
+      <AnimatePresence>
+        {activeModal === 'privacy' && (
+          <LegalModal 
+            isOpen={true} onClose={() => setActiveModal(null)} 
+            title="Privacy Policy" 
+            content={legalData.privacy.value} 
+            fileUrl={legalData.privacy.file} 
+          />
+        )}
+        {activeModal === 'terms' && (
+          <LegalModal 
+            isOpen={true} onClose={() => setActiveModal(null)} 
+            title="Terms of Service" 
+            content={legalData.terms.value} 
+            fileUrl={legalData.terms.file} 
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

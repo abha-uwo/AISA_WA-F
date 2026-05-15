@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
+import PlatformAssistant from './PlatformAssistant';
 
 const DashboardLayout = ({ children, role: initialRole }) => {
   const [user, setUser] = useState(null);
@@ -60,6 +61,7 @@ const DashboardLayout = ({ children, role: initialRole }) => {
           </div>
         </div>
       </main>
+      <PlatformAssistant />
     </div>
   );
 };

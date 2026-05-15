@@ -12,7 +12,14 @@ const ClientSettingsPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [editData, setEditData] = useState({ name: '', phone_number: '' });
+  const [editData, setEditData] = useState({ 
+    name: '', 
+    phone_number: '',
+    whatsapp_access_token: '',
+    whatsapp_phone_number_id: '',
+    whatsapp_waba_id: '',
+    whatsapp_verify_token: ''
+  });
   
   const user = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : {};
 
@@ -26,7 +33,11 @@ const ClientSettingsPage = () => {
       setClient(res.data.client);
       setEditData({
         name: res.data.user.name,
-        phone_number: res.data.client.phone_number || ''
+        phone_number: res.data.client.phone_number || '',
+        whatsapp_access_token: res.data.client.whatsapp_access_token || '',
+        whatsapp_phone_number_id: res.data.client.whatsapp_phone_number_id || '',
+        whatsapp_waba_id: res.data.client.whatsapp_waba_id || '',
+        whatsapp_verify_token: res.data.client.whatsapp_verify_token || ''
       });
     } catch (err) {
       console.error('Failed to fetch profile');
@@ -63,11 +74,11 @@ const ClientSettingsPage = () => {
         <div className="mb-12 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Account Settings</h1>
-            <p className="text-slate-500 font-medium italic">Manage your profile, subscription and security.</p>
+            <p className="text-slate-500 font-medium italic">Manage your profile, integration and security.</p>
           </div>
           {!isEditing ? (
             <button onClick={() => setIsEditing(true)} className="px-6 py-3 bg-slate-900 text-white rounded-2xl font-bold text-xs hover:bg-blue-600 transition-all shadow-xl shadow-slate-100">
-              Edit Profile
+              Edit Settings
             </button>
           ) : (
             <div className="flex items-center gap-3">
@@ -122,6 +133,90 @@ const ClientSettingsPage = () => {
                     <p className="text-base font-semibold text-slate-900 tracking-tight">{client?.phone_number || 'Not Linked'}</p>
                   )}
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* WhatsApp Integration Section */}
+          <div className="space-y-1">
+            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 ml-1">WhatsApp Integration</h3>
+            <div className="bg-white border border-slate-100 rounded-[40px] p-8 space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Phone Number ID</label>
+                  {isEditing ? (
+                    <input 
+                      value={editData.whatsapp_phone_number_id} 
+                      onChange={e => setEditData({...editData, whatsapp_phone_number_id: e.target.value})} 
+                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 outline-none focus:border-blue-500 transition-all font-semibold text-sm" 
+                      placeholder="e.g. 1151075064754011"
+                    />
+                  ) : (
+                    <div className="bg-slate-50 rounded-2xl px-5 py-4 font-semibold text-slate-700 text-sm border border-transparent">
+                      {client?.whatsapp_phone_number_id || 'Not configured'}
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">WABA ID (Business Account ID)</label>
+                  {isEditing ? (
+                    <input 
+                      value={editData.whatsapp_waba_id} 
+                      onChange={e => setEditData({...editData, whatsapp_waba_id: e.target.value})} 
+                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 outline-none focus:border-blue-500 transition-all font-semibold text-sm" 
+                      placeholder="e.g. 1003621608783022"
+                    />
+                  ) : (
+                    <div className="bg-slate-50 rounded-2xl px-5 py-4 font-semibold text-slate-700 text-sm border border-transparent">
+                      {client?.whatsapp_waba_id || 'Not configured'}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Access Token</label>
+                {isEditing ? (
+                  <textarea 
+                    value={editData.whatsapp_access_token} 
+                    onChange={e => setEditData({...editData, whatsapp_access_token: e.target.value})} 
+                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 outline-none focus:border-blue-500 transition-all font-semibold text-sm h-24 resize-none" 
+                    placeholder="Enter your Meta Access Token here..."
+                  />
+                ) : (
+                  <div className="bg-slate-50 rounded-2xl px-5 py-4 font-mono text-slate-500 text-[10px] border border-transparent break-all line-clamp-2">
+                    {client?.whatsapp_access_token ? '••••••••••••••••••••••••••••••••' : 'Not configured'}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Webhook Verify Token</label>
+                <div className="flex gap-4">
+                  {isEditing ? (
+                    <input 
+                      value={editData.whatsapp_verify_token} 
+                      onChange={e => setEditData({...editData, whatsapp_verify_token: e.target.value})} 
+                      className="flex-1 bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 outline-none focus:border-blue-500 transition-all font-semibold text-sm" 
+                      placeholder="e.g. my_secure_token_123"
+                    />
+                  ) : (
+                    <div className="flex-1 bg-slate-50 rounded-2xl px-5 py-4 font-semibold text-slate-700 text-sm border border-transparent">
+                      {client?.whatsapp_verify_token || 'Not configured'}
+                    </div>
+                  )}
+                  <button 
+                    onClick={() => {
+                      const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+                      setEditData({...editData, whatsapp_verify_token: token});
+                    }}
+                    disabled={!isEditing}
+                    className="px-6 bg-slate-100 text-slate-600 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-slate-200 transition-all disabled:opacity-0"
+                  >
+                    Generate
+                  </button>
+                </div>
+                <p className="text-[10px] text-slate-400 italic ml-1 mt-2">Use this token when setting up the Webhook in Meta Developer Dashboard.</p>
               </div>
             </div>
           </div>
@@ -183,8 +278,6 @@ const ClientSettingsPage = () => {
               </button>
             </div>
           </div>
-
-
         </div>
 
         {/* Password Change Modal */}

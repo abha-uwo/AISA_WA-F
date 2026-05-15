@@ -19,8 +19,6 @@ import {
   Globe,
   Key,
   Smartphone,
-  Facebook,
-  Instagram,
   Lock,
   MoreVertical,
   MessageSquare
@@ -290,14 +288,14 @@ const AdminClients = () => {
                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest italic">WhatsApp</span>
                     </div>
                     <div className="flex-1 p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center gap-2 opacity-40 cursor-not-allowed group relative">
-                       <Facebook className="text-slate-400" size={24} />
+                       <Globe className="text-slate-400" size={24} />
                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Facebook</span>
                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                           <div className="bg-slate-900 text-white text-[8px] px-2 py-1 rounded-full font-bold uppercase tracking-tighter">Locked</div>
                        </div>
                     </div>
                     <div className="flex-1 p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center gap-2 opacity-40 cursor-not-allowed group relative">
-                       <Instagram className="text-slate-400" size={24} />
+                       <Smartphone className="text-slate-400" size={24} />
                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Instagram</span>
                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                           <div className="bg-slate-900 text-white text-[8px] px-2 py-1 rounded-full font-bold uppercase tracking-tighter">Locked</div>
